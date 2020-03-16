@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.UserMapper">
+
+	<!-- 查询所用用户id -->
+	<select id="getAllUserId"  resultType="int">
+		SELECT	  `user_id`		FROM 	`user`
+	</select>
+	
+	<!-- 插入用户id -->
+	<insert id="insertUser">
+		insert into user(user_id,name) values(#{user_id},#{name})
+	</insert>
+	
+	<!-- 根据id查询用户积分 -->
+	<select id="getIntegralById" parameterType="int" resultType="Double">
+		SELECT	  `integral`	FROM 	`user`  where `user_id` = #{user_id}
+	</select>
+	
+	<!-- 加减积分设置当前新积分 -->
+	<update id="updateIntegralById" >
+		update `user` set `integral` = #{integral} where `user_id` = #{user_id};
+	</update>
+	
+	<!-- 查询是否有对应的id和名字 -->
+	<select id="existUser" resultType="Integer">
+		select count(*) from `user`  where `user_id` = #{user_id} and `name` = #{name};
+	</select>
+	
+	<!-- 查询用户信息 -->
+	<select id="getUser" parameterType="Integer" resultType="java.util.Map">
+		select u.*,l.lv,l.growth from user u,level l 
+			where u.user_id = l.user_id and u.user_id = #{user_id};
+	</select>
+
+	<!-- 查询与用户相关的任务 -->
+	<select	id="getUserTask" parameterType="Integer" resultType="java.util.Map">
+		select t.task_id,t.title,t.description,t.integral,t.growth,t.aim,t.type,u.`status`,u.acquire
+		 from task t, user_task u 
+			where t.task_id = u.task_id and u.user_id = #{user_id};
+	</select>
+
+	<!-- 查询与任务相关的优惠券 -->
+	<select id="getUserTaskCoupon" parameterType="Integer" resultType="Integer">
+		select c.co_id from coupon c ,task_coupon tc,task t 
+		where c.co_id = tc.co_id and tc.task_id = t.task_id and t.task_id = #{task_id}
+	</select>
+
+	<!-- 查询是否存在该任务 -->
+	<select id="existTask" parameterType="Integer" resultType="Integer">
+		select count(*) from `task` where  exist = 0 and task_id = #{task_id};
+	</select>
+
+	<!-- 查询是否有正在进行的同类型任务 -->	
+	<select id="existTasking" parameterType="Integer" resultType="Integer">
+		select count(*) from
+		(select type from `task` where task_id = #{task_id} ) s,
+		task t inner join user_task u ON	t.task_id = u.task_id
+		where s.type = t.type and u.status = 0 
+	</select>
+	
+	<!-- 用户领取任务 -->
+	<insert id="acquireTask">
+		insert into `user_task` (user_id,task_id) values(#{user_id},#{task_id});
+	</insert>
+	
+	<!-- 查询用户公益信息 -->
+	<select id="UserpublicWelfareList"  resultType="java.util.Map">
+		select t.pw_id,t.user_id,t.title,t.integral,t.description,t.reason,DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time, 
+		DATE_FORMAT(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,t.path,t.destory,t.destory,t.exist,t.status,d.donate from 
+    		(select * from public_welfare where user_id = #{user_id} and destory = 0 limit #{currentPage}, #{pageSize}) t
+    			left join
+    		(select sum(integral) as donate, pw_id from donate group by pw_id) d
+    		on t.pw_id = d.pw_id
+	</select>
+	
+	<!-- 查询详细的公益信息 -->
+	<select id="publicWelfareDetail" parameterType="Integer" resultType="java.util.Map">
+		select * from public_welfare where pw_id = #{pw_id} and user_id = #{user_id}  and destory = 0;
+	</select>
+	
+	<!-- 查询我的优惠券 -->
+	<select id="userCoupon"  resultType="java.util.Map">
+		select uc.uc_id, uc.create_time, c.* from user_coupon uc, user u, coupon c 
+		where uc.user_id = u.user_id and uc.co_id = c.co_id and uc.user_id = #{user_id} and uc.status = 0 limit #{currentPage},#{pageSize}
+	</select>
+	
+	<!-- 任务完成修改字段！ -->
+	<update id="finishTask" parameterType="Integer">
+		update `user_task` set `acquire` = 1 where task_id = #{task_id} and user_id = #{user_id}
+	</update>
+	
+	<!-- 任务完成获取对应积分和经验值 -->
+	<select id="acquireAward" resultType="java.util.Map">
+		select t.integral , t.growth from task t,user_task u
+		where t.task_id = u.task_id and t.exist = 0 and t.task_id = #{task_id} and u.user_id = #{user_id}
+	</select>
+	
+	<!-- 添加我的优惠券 -->
+	<insert id="addUserCoupon" >
+		insert into user_coupon(uc_id,user_id,co_id,create_time) values(#{uc_id},#{user_id},#{co_id},#{create_time})
+	</insert>
+	
+	<!-- 清掉用户任务 -->
+	<select id="clearUserTask">
+		delete from  user_task ; 
+	</select>
+	
+	<!-- 完成任务却还没领取奖励的用户 -->
+	<select id="findUserAward" resultType="java.util.Map">
+		select user_id,task_id from  user_task where acquire = 0 and status = 1; 
+	</select>
+	
+</mapper>

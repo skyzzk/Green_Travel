@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.AdvertisementMapper">
+
+	<!-- 查询所有广告 -->
+	<select id="getAllAdvertisement"  resultType="Advertisement">
+		SELECT	*	FROM `Advertisement` where `ad_exist` = 0 and `ad_status` = 1 ;
+	</select>
+	
+	<!-- 根据条件查询广告 -->
+	<select id="getAdvertisement"  resultType="Advertisement">
+		SELECT	*	FROM `Advertisement`
+		<where>			
+				`ad_exist` = 0
+			<if test="min_time != null and min_time != ''">
+				<![CDATA[   and DATE_FORMAT(ad_date, '%Y-%m-%d') >=  DATE_FORMAT(#{min_time}, '%Y-%m-%d')   ]]>  
+			</if>
+			<if test="max_time != null and max_time != ''">
+				<![CDATA[   and DATE_FORMAT(ad_date, '%Y-%m-%d') <=  DATE_FORMAT(#{max_time}, '%Y-%m-%d')   ]]>  
+			</if>
+			<if test="ad_status != -1">
+				and `ad_status` = #{ad_status}
+			</if>			  
+		</where>
+		LIMIT #{current},#{pageSize}; 
+	</select>
+	
+	<!-- 插入广告 -->
+	<insert id="insertAdvertisement" parameterType="Advertisement">
+		insert into 
+			Advertisement(ad_id,ad_path,ad_date)
+			values(#{ad_id},#{ad_path},#{ad_date});		
+	</insert>
+	
+	<!-- 更新广告 -->
+	<update id="updateAdvertisement" parameterType="Advertisement">
+		update `Advertisement`
+			set `ad_path` = #{ad_path},`ad_link` = #{ad_link},`ad_status` = #{ad_status}
+			where `ad_id` =#{ad_id};
+	</update>
+	
+	<!-- 删除广告 -->
+	<update id="deleteAdvertisement" parameterType="int">
+		delete from `Advertisement` where `ad_id` = #{ad_id};
+	</update>
+	
+	<!-- 批量删除广告 -->
+	<update id="deleteAllAdvertisement">
+		update`Advertisement`
+		set  `ad_exist` = 1
+		where `ad_id` in
+		<foreach item="ad_id" collection="array" index="no" open="(" separator="," close=")">
+			#{ad_id}
+		</foreach>
+	</update>
+	
+	<!-- 统计数量 -->
+	<select id="totalAdvertisement"  resultType="int">
+		SELECT
+			count(*)
+		FROM `Advertisement`
+		<where>			
+			`ad_exist` = 0
+			<if test="min != null and min != ''">
+				<![CDATA[   and DATE_FORMAT(ad_date, '%Y-%m-%d') >=  DATE_FORMAT(#{min}, '%Y-%m-%d')   ]]>  
+			</if>
+			<if test="max != null and max != ''">
+				<![CDATA[   and DATE_FORMAT(ad_date, '%Y-%m-%d') <=  DATE_FORMAT(#{max}, '%Y-%m-%d')   ]]>  
+			</if>
+			<if test="ad_status != -1">
+				and `ad_status` = #{ad_status}
+			</if>	
+
+		</where>
+
+	</select>
+	
+	
+</mapper>

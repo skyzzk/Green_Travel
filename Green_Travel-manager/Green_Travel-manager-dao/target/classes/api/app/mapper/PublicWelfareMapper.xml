@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.PublicWelfareMapper">
+
+
+	<!-- 查询用户公益 -->
+	<select id="getAllPublicWelfare"   resultType="java.util.Map">
+		SELECT	 p.pw_id,p.user_id,p.title,p.integral,p.description,p.reason,
+		 	DATE_FORMAT(p.create_time,'%Y-%m-%d %H:%i:%s') as create_time  ,DATE_FORMAT(p.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+			p.path,p.destory,p.exist,p.status,u.name	FROM 	public_welfare p, user u 
+		<where>
+			p.user_id = u.user_id
+			<if test="name != null and name !=''">
+				AND u.name	 LIKE CONCAT(CONCAT('%',#{name},'%'))
+			</if>
+			and p.exist = 0
+		</where> 
+		ORDER BY pw_id
+		LIMIT #{currentPage},#{pageSize}; 
+	</select>
+	
+	<!-- 统计数量 -->
+	<select id="totalPublicWelfare" parameterType="String" resultType="int">
+		select count(*) from public_welfare p, user u
+		<where>
+			p.user_id = u.user_id and p.exist = 0
+			<if test="name != null and name != ''">
+				AND u.name LIKE CONCAT(CONCAT('%',#{name},'%'))
+			</if>
+		</where>
+	</select>
+
+	<!-- 批量删除 ，改变exist字段-->
+	<update id="deletePublicWelfare">
+		update `public_welfare` 
+			set `exist` = 1
+		WHERE `pw_id` in
+		<foreach item="ids" collection="array" index="no" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+	</update>
+	
+	<!-- 修改状态 -->
+	<update id="updateStatus">
+		update	`public_welfare` 
+			set `status`=#{status},`reason`=#{reason}
+			where `pw_id` = #{id}
+	</update>
+	
+	<!-- 保存公益申请 -->
+	<insert id="insertPublicWelfare" parameterType="PublicWelfare">
+		insert into	`public_welfare` 
+		(pw_id,user_id,title,integral,description,create_time,end_time,path)
+		values(#{pw_id},#{user_id},#{title},#{integral},#{description},#{create_time},#{end_time},#{path})
+	</insert>
+	
+	<!-- 查询发布的公益 -->
+	<select id="getPublicWelfare"  resultType="java.util.Map">
+		select t.*, (case when d.donate is null then 0 else d.donate end) as donate from 
+    		(select p.pw_id,p.user_id,p.title,p.integral,p.description,p.reason,
+		 		DATE_FORMAT(p.create_time,'%Y-%m-%d %H:%i:%s') as create_time  ,DATE_FORMAT(p.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+				p.path,p.destory,p.exist,p.status,
+			 u.name from public_welfare p inner join user u on p.user_id = u.user_id where p.exist = 0 and p.status = 1 ) t
+    		left join
+    		(select sum(integral) as donate, pw_id from donate group by pw_id) d
+    		on t.pw_id = d.pw_id 
+    		ORDER BY t.pw_id
+    		LIMIT #{currentPage},#{pageSize}; 
+	</select>
+	
+	<!-- 根据id查询发布的公益 -->
+	<select id="getPublicWelfareByid" parameterType="Integer" resultType="java.util.Map">
+		select t.*, (case when d.donate is null then 0 else d.donate end) as donate from 
+    		(select p.pw_id,p.user_id,p.title,p.integral,p.description,p.reason,
+		 		DATE_FORMAT(p.create_time,'%Y-%m-%d %H:%i:%s') as create_time  ,DATE_FORMAT(p.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+				p.path,p.destory,p.exist,p.status,
+			 u.name from public_welfare p inner join user u on p.user_id = u.user_id where p.exist = 0 and p.status = 1 ) t
+    		left join
+    		(select sum(integral) as donate, pw_id from donate group by pw_id) d
+    		on t.pw_id = d.pw_id where t.pw_id = #{pw_id}
+	</select>
+	
+</mapper>

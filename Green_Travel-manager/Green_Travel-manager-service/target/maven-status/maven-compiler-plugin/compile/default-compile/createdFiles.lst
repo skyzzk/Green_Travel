@@ -1,0 +1,13 @@
+api\app\redis\JedisClientCluster.class
+api\app\redis\JedisClientPool.class
+api\app\service\impl\PublicWelfareServiceimpl.class
+api\app\service\impl\CouponServiceimpl.class
+api\app\service\impl\LevelServiceimpl.class
+api\app\service\impl\CommodityServiceimpl.class
+api\app\service\impl\OrderServiceimpl.class
+api\app\service\impl\TaskServiceimpl.class
+api\app\redis\JedisClient.class
+api\app\service\impl\AdvertisementServiceimpl.class
+api\app\service\impl\SignInServiceimpl.class
+api\app\service\impl\UserServiceimpl.class
+api\app\service\impl\DonateServiceimpl.class

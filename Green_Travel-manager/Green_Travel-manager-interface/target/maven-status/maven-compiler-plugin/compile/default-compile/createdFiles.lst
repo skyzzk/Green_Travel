@@ -1,0 +1,10 @@
+api\app\service\SignInService.class
+api\app\service\TaskService.class
+api\app\service\PublicWelfareService.class
+api\app\service\UserService.class
+api\app\service\LevelService.class
+api\app\service\CommodityService.class
+api\app\service\OrderService.class
+api\app\service\CouponService.class
+api\app\service\AdvertisementService.class
+api\app\service\DonateService.class

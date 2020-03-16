@@ -1,0 +1,10 @@
+api\app\mapper\CouponMapper.class
+api\app\mapper\TaskMapper.class
+api\app\mapper\CommodityMapper.class
+api\app\mapper\AdvertisementMapper.class
+api\app\mapper\LevelMapper.class
+api\app\mapper\PublicWelfareMapper.class
+api\app\mapper\UserMapper.class
+api\app\mapper\SignInMapper.class
+api\app\mapper\DonateMapper.class
+api\app\mapper\OrderMapper.class

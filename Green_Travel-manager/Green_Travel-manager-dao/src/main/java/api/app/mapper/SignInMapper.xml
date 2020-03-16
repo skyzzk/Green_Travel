@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.SignInMapper">
+	<!-- 默认插入除了签到的数据 -->
+	 <insert id="insertSignIn"  parameterType="SignIn" >
+	  insert into signin(user_id,id,year,month) values(#{user_id},#{id},#{year},#{month}); 
+	 </insert>
+	 
+	 <!-- 更新年月 -->
+	 <update id="updateSignIn" parameterType="SignIn">
+	  update `signin` 
+	   set `year` = #{year},`month` = #{month}
+	  where `user_id` = #{user_id};
+	 </update>
+	 
+	 <!-- 查询当前月是否存在签到 -->
+	 <select id="isExist" resultType="int" >
+	  select  count(*) from `signin` where  `user_id` = #{user_id} and `month` = #{month} and `year` = #{year};
+	 </select>
+	 
+	 <!-- 查询id和签到的天 -->
+	 <select id="getDays"  resultType="java.util.Map">
+	  select `id`,`day` from `signin` where `user_id` = #{user_id} and `month` = #{month} and `year` = #{year};
+	 </select>
+	 
+	 <!-- 获取签到的天 -->
+	 <select id="getday"  resultType="String">
+	 	select `day` from `signin` where `id` = #{id} and `month` = #{month} and `year` = #{year};
+	 </select>
+	 
+	 <!-- 签到 -->
+	 <update id="updateDay">
+	 	update `signin`	set	`day` = #{day}	where `id` = #{id};
+	 </update>
+	 
+	 
+
+</mapper>

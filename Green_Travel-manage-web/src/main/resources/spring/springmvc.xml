@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+	<context:component-scan base-package="api.app.controller" />
+
+		<!-- 配置注解驱动 -->
+	<mvc:annotation-driven/>
+
+	
+	
+	<!-- 配置上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <value>10485760</value>
+        </property>
+        <property name="defaultEncoding">
+            <value>UTF-8</value>
+        </property>
+    </bean>
+    
+	     <!-- 自定义相同url和数据的拦截器 拦截所有的url
+	      		拦截url
+	      		自定义拦截器类 -->
+	     <!-- 拦截器，拦截未登录访问接口的请求
+	      		拦截所有的请求，这个必须写在前面，也就是写在【不拦截】的上面 -->
+<!--     <mvc:interceptors>    
+      	<mvc:interceptor>        
+          <mvc:mapping path="/**"/>         
+          <bean class="api.app.filter.PreventRepeat"/>
+      	</mvc:interceptor>  
+        <mvc:interceptor>      
+          <mvc:mapping path="/**"/>
+          <bean class="api.app.filter.LoginFilter"/>
+        </mvc:interceptor>              
+   </mvc:interceptors> -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>	
+	<!-- 引用dubbo服务 -->
+	<dubbo:application name="Green_travel-manager-web"/>
+	<dubbo:registry protocol="zookeeper" address="192.168.209.136:2181"/>	
+	<dubbo:reference interface="api.app.service.AdvertisementService" id="advertisementService" />	
+	<dubbo:reference interface="api.app.service.CommodityService" id="commodityService" />	
+	<dubbo:reference interface="api.app.service.CouponService" id="couponService" />	
+	<dubbo:reference interface="api.app.service.DonateService" id="donateService" />	
+	<dubbo:reference interface="api.app.service.LevelService" id="levelService" />	
+	<dubbo:reference interface="api.app.service.OrderService" id="orderService" />	
+	<dubbo:reference interface="api.app.service.PublicWelfareService" id="publicWelfareService" />	
+	<dubbo:reference interface="api.app.service.SignInService" id="signInService" />	
+	<dubbo:reference interface="api.app.service.TaskService" id="taskService" />	
+	<dubbo:reference interface="api.app.service.UserService" id="userService" />	
+</beans>
+

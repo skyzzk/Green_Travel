@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.CommodityMapper">
+
+	<!-- 根据ID查商品 -->
+	<select id="getCommodityByid" parameterType="int" resultType="Commodity">
+		SELECT
+			*
+		FROM `Commodity`
+		WHERE com_id = #{com_id}
+	</select>
+	
+	<!-- 查询所有商品 -->
+	<select id="getAllCommodity" resultType="Commodity">
+		SELECT
+		  *
+		FROM `Commodity`
+	</select>
+	
+	 <!-- 添加保存 -->
+    <insert id="insertCommodity" parameterType="Commodity" >
+        insert into 
+        	Commodity(com_id,com_name,com_intro,com_value,com_image,create_time,com_stock,status)
+        	values(#{com_id},#{com_name},#{com_intro},#{com_value},#{com_image},#{create_time},#{com_stock},#{status});
+    </insert> 
+	
+	<!-- 删除商品 -->
+	<delete id="deleteCommodity" parameterType="int">
+		DELETE
+		FROM `Commodity`
+		WHERE `com_id` = #{com_id};
+	</delete>
+	
+	<!-- 批量删除商品 ，改变exist字段-->
+	<update id="deleteAllCommodity">
+		update `commodity` 
+			set `exist` = 1
+		WHERE `com_id` in
+		<foreach item="com_id" collection="array" index="no" open="(" separator="," close=")">
+			#{com_id}
+		</foreach>
+	</update>
+	
+	<!-- 更新商品 -->
+	<update id="updateCommodity" parameterType="Commodity">
+		UPDATE `Commodity` 
+			set `com_name` = #{com_name},`com_intro` = #{com_intro},`com_value` = #{com_value},`com_image` = #{com_image},`create_time` = #{create_time},
+			`com_stock` = #{com_stock},`status` = #{status}
+		where `com_id` = #{com_id};
+	</update>
+	
+	<!-- 模糊查询 -->
+	<select id="likeCommodity"  resultType="Commodity">
+		SELECT
+			*
+		FROM `Commodity`
+		<where>
+			<if test="com_name != null and com_name != ''">
+				AND com_name LIKE CONCAT(CONCAT('%',#{com_name},'%'))
+			</if>
+				AND exist = 0
+		</where>
+		ORDER BY com_id
+		LIMIT #{currentPage},#{pageSize}; 
+	</select>
+	
+	<!-- 统计数量 -->
+	<select id="totalCommodity"  resultType="int">
+		SELECT
+			count(*)
+		FROM `Commodity`
+		<where>
+			<if test="com_name != null and com_name != ''">
+				AND com_name LIKE CONCAT(CONCAT('%',#{com_name},'%'))
+			</if>
+				and exist = 0
+		</where>
+	</select>
+	
+	<!-- 根据商品id查积分 -->
+	<select id="getIntegralById" parameterType="int" resultType="Double">
+		select `com_value` from `Commodity` where `com_id` = #{com_id};
+	</select>
+
+	<!-- 兑换后减去存储量 -->
+	<update id="subStore" parameterType="int">
+		update `Commodity` set `com_stock` = com_stock - 1 where `com_id` = #{com_id};
+	</update>
+	
+	<!-- 根据商品id查询商品存储量 -->
+	<select id="getstrorcByid" parameterType="int" resultType="int">
+		select `com_stock`	from	`commodity`	 where `com_id` = #{com_id}
+	</select>
+
+</mapper>

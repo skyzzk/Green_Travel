@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.TaskMapper">
+
+	<!--  插入新的数据 -->
+	<insert id="insertTask" parameterType="Task">
+		insert into task (task_id,title,description,integral,growth,type,aim,create_time) 
+			values(#{task_id},#{title},#{description},#{integral},#{growth},#{type},#{aim},#{create_time});
+	</insert>
+	
+	<!-- 插入与任务相关的优惠券ID -->
+	<insert id="insertTaskCoupon" >
+		insert into task_coupon (task_id,co_id) 
+			values(#{task_id},#{co_id});
+	</insert>
+
+	<!-- 查询任务数量 -->
+	<select id="totalTask"  parameterType="Integer" resultType="Integer">
+		select count(*) from task 
+		<where>
+			exist = 0
+			<if test="type != -1">
+				and type = #{type}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询任务 -->
+	<select id="listTaskBytype"  resultType="java.util.Map">
+		select  `task_id`,`title`,`description`,`integral`,`growth`,`type`,`aim`  from task 
+		<where>
+			exist = 0
+			<if test="type != -1">
+				and type = #{type}
+			</if>
+		</where>
+		LIMIT #{currentPage},#{pageSize}
+	</select>
+
+	<!-- 根据任务id查优惠券 -->
+	<select id="getCouponByid" resultType="java.util.Map">
+		select c.* from task_coupon tc, task t, coupon c where t.task_id = tc.task_id and tc.co_id = c.co_id and t.task_id = #{task_id};
+	</select>
+	
+	<!-- 删除订单
+	批量删除订单 ，改变exist字段 -->
+	<update id="deleteTask">
+		update `task` 
+			set `exist` = 1
+		WHERE `task_id` in
+		<foreach item="task_id" collection="array" index="no" open="(" separator="," close=")">
+			#{task_id}
+		</foreach>
+	</update>
+	
+	<!-- 修改任务 -->
+	<update id="updateTask" parameterType="Task">
+		update `task`
+		set `title` = #{title},`aim` = #{aim},`type` = #{type}, `description` = #{description}, `integral` = #{integral}, `growth` = #{growth},
+		`create_time` = #{create_time}
+		where task_id = #{task_id}
+	</update>
+	
+	<!-- 删除与任务相关的优惠券ID -->
+	<delete id="deleteTaskCoupon" parameterType="Integer" >
+		delete  from `task_coupon`
+		where task_id = #{task_id}
+	</delete>
+
+	<!-- 前台查询任务 -->
+		<select id="listTask"  resultType="java.util.Map">
+		select  `task_id`,`title`,`description`,`integral`,`growth`,`type`,`aim` ,`exist` from task 
+		<where>
+			exist = 0
+		</where>
+		LIMIT #{currentPage},#{pageSize}
+	</select>
+	
+	<!-- 根据任务id查询任务 -->
+	<select id="getTaskCouponByid" parameterType="Integer" resultType="java.util.Map">
+		select t.task_id,t.title,t.description,t.integral,t.growth,t.type,t.aim 
+		from task t  where exist = 0 and t.task_id = #{task_id} ;
+	</select>
+	
+	<!-- 查询与任务相关的优惠券详细信息 -->
+	<select id="getAllCouponByid" parameterType="Integer" resultType="java.util.Map">
+		select c.co_id,c.day,c.description,c.integral from coupon c,task_coupon t 
+		where c.exist = 0 and c.co_id = t.co_id and t.task_id = #{task_id};
+	</select>
+	
+	<!-- 获取任务相关要求值 -->
+	<select	id="getTaskAim" parameterType="Integer" resultType="java.util.Map">
+
+		select min(t.aim) as aim,t.task_id from task t,user_task u 
+			where t.task_id = u.task_id and u.status = 0 and u.user_id = #{user_id} and t.type = #{type} ;	
+			 
+	</select>
+	
+	<!-- 更新用户数据 -->
+	<select id="updateUserTask" parameterType="Integer">
+		update `user_task` set status = 1 where user_id = #{user_id} and task_id = #{task_id};
+	</select>
+
+
+</mapper>

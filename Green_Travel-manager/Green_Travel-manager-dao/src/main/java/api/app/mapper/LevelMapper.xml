@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.LevelMapper">
+
+	<!-- 查询所用用户id -->
+	<select id="getLevel" parameterType="int" resultType="java.util.Map">
+		SELECT	*	FROM 	`level`	where `user_id` = #{user_id};
+	</select>
+
+	<!-- 查询各个等级人数 -->
+	<select id="getAllLevel" resultType="java.util.Map">
+		select count(*) total, lv from level group by lv;
+	</select>
+	
+	<!--  插入新的数据 -->
+	<insert id="insertLevel" parameterType="int" >
+		insert into level (user_id) values(#{user_id});
+	</insert>
+	
+	<!-- 增加经验值 -->
+	<update id="addGrowth" parameterType="int">
+		update `level` set growth = #{growth} + growth where user_id = #{user_id};
+	</update>
+	
+	<!-- 获取经验值 -->
+	<select id="getGrowth"  parameterType="int" resultType="java.util.Map">
+		select lv, growth from level where user_id = #{user_id};
+	</select>
+	
+	<!-- 升级 -->
+	<update id="levelUpgrade"  parameterType="int">
+		update `level` set growth = #{growth},lv = #{lv} where user_id = #{user_id};
+	</update>
+	
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.DonateMapper">
+
+	<!-- 查询是否已经捐赠过该公益活动 -->
+	<select id="everDonate" resultType="int">
+		select count(*) from `donate` where `pw_id`=#{pw_id} and `user_id`=#{user_id};
+	</select>
+	
+	<!-- 减少用户积分 -->
+	<update id="subDonate">
+		update `user`
+			set `integral`=integral - #{integral}	where `user_id`=#{user_id}
+	</update>
+	
+	<!-- 插入捐赠记录 -->
+	<insert id="insertDonate" parameterType="Donate">
+		insert into `donate`
+		(id,user_id,pw_id,integral) values(#{id},#{user_id},#{pw_id},#{integral})
+	</insert>
+	
+	<!-- 修改捐赠记录 -->
+	<update id="updateDonate" parameterType="Donate">
+		update `donate`
+			set `integral`=((integral *100 + #{integral} *100) /100	) where `pw_id`=#{pw_id}
+	</update>
+	
+	<!-- 查询捐赠信息 -->
+	<select id="getDonate" resultType="java.util.Map">
+		select d.pw_id,d.integral,u.name from donate d inner join user u on d.user_id=u.user_id		
+			where	d.pw_id=#{pw_id}  order by d.integral desc  LIMIT #{currentPage},#{pageSize}; 
+		
+	</select>
+</mapper>

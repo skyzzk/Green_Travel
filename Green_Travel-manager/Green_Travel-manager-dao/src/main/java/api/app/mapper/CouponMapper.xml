@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.CouponMapper">
+
+
+
+	<!-- 查询所有优惠券 ，根据分页-->
+	<select id="getAllCoupon" resultType="Coupon">
+		select * from coupon where exist = 0 LIMIT #{currentPage},#{pageSize}
+	</select>
+	
+	<!--  插入新的数据 -->
+	<insert id="insertCoupon" parameterType="Coupon">
+		insert into coupon (co_id,day,description,integral) values(#{co_id},#{day},#{description},#{integral});
+	</insert>
+	
+	<!-- 删除订单 -->
+	<!-- 批量删除订单 ，改变exist字段-->
+	<update id="deleteCoupon">
+		update `coupon` 
+			set `exist` = 1
+		WHERE `co_id` in
+		<foreach item="co_id" collection="array" index="no" open="(" separator="," close=")">
+			#{co_id}
+		</foreach>
+	</update>
+	
+	<!-- 修改优惠券信息 -->
+	<update id="updateCoupon" parameterType="Coupon">
+		update `coupon` 
+			set `day` = #{day},`description` = #{description},`integral` = #{integral}
+			WHERE `co_id` = #{co_id};
+	</update>
+	
+	<!-- 查询所有优惠券 -->
+	<select id="getAllCoupons" resultType="Coupon">
+		select * from coupon where exist = 0;
+	</select>
+	
+	<!-- 查询优惠券条数 -->
+	<select id="totalCoupon"  resultType="Integer">
+		select count(*) from `coupon` where `exist` = 0;
+	</select>
+	
+	<!-- 根据优惠券id查询优惠券 -->
+		<select id="getCouponByid" parameterType="Integer" resultType="java.util.Map">
+		select u.create_time,u.status ,c.day,c.integral
+		from `user_coupon` u inner join  `coupon` c  on u.co_id = c.co_id where c.exist = 0 and uc_id = #{uc_id} ;
+	</select>
+	
+	<!-- 改变优惠券字段，已用 -->
+	<update id="updateCouponStatus" parameterType="Integer">
+		update `user_coupon` 
+			set `status` = 1
+			WHERE `uc_id` = #{uc_id};
+	</update>
+	
+	
+</mapper>

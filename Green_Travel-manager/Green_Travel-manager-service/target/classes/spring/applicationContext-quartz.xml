@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+ 
+ 
+    <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>任务调度配置<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< -->
+    <!-- 实例化bean -->
+    <!-- <bean id="demo" class="api.app.quartz.FinishTask" /> -->
+ 
+ 
+    <!-- 配置MethodInvokingJobDetailFactoryBean -->
+   <!--  <bean id="testTaskMethod"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="demo" />
+        <property name="targetMethod" value="execute" />
+        <property name="concurrent" value="false" />
+    </bean> -->
+ 
+ 
+    <!-- ============= 调度触发器 ============= -->
+   <!--  <bean id="articleBatchRunTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="testTaskMethod" />
+        每天晚上12点执行一次
+        <property name="cronExpression" value="0 0 0 * * ?" />
+    </bean> -->
+    <!--其他执行执行规则可以自行查找-->
+ 
+    <!-- ============= 调度工厂 ============= -->
+    <!-- <bean id="schedulerBean"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+          lazy-init="false">
+        <property name="triggers">
+            <list>
+                <ref bean="articleBatchRunTrigger" />
+            </list>
+        </property>
+    </bean> -->
+</beans>

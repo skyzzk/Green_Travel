@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="api.app.mapper.OrderMapper">
+
+	<!-- 根据订单id查询订单 -->
+	<select id="getOrderByid" parameterType="int" resultType="Order">
+		SELECT
+		  `order_id`,
+		  `com_id`,
+		  `user_id`
+		FROM `Order`
+		WHERE order_id = #{order_id}
+	</select>
+	
+	<!-- 插入订单 -->
+	<insert id="insertOrder"  parameterType="Order" >
+		insert into user_order(order_id,com_id,user_id,serial_number,quantity,create_time)
+		 values(#{order_id},#{com_id},#{user_id},#{serial_number},#{quantity},#{create_time}); 
+	</insert>
+	
+	<!-- 连表查询所有订单和具体商品信息 -->
+	<select id="getAllorder" resultMap="BaseResultMap">
+		select * 
+		from user_order o , commodity c 
+		where o.com_id = c.com_id and o.exist = 0;
+	</select>
+	
+	<!-- 连表配置 -->
+	<resultMap id="BaseResultMap" type="api.app.pojo.Order">
+		<id column="order_id" jdbcType="INTEGER" property="order_id" />
+		<id column="com_id" jdbcType="INTEGER" property="com_id" />
+		<id column="user_id" jdbcType="INTEGER" property="user_id" />		
+		<result column="serial_number" jdbcType="VARCHAR" property="serial_number" />
+		<result column="quantity" jdbcType="INTEGER" property="quantity" />
+		<result column="create_time" jdbcType="DATE" property="create_time" />
+		<result column="exist" jdbcType="INTEGER" property="exist" />
+		<association property="commodity" javaType="Commodity" >
+			<result column="com_name" jdbcType="VARCHAR" property="com_name" />
+			<result column="com_intro" jdbcType="VARCHAR" property="com_intro" />
+			<result column="com_value" jdbcType="DOUBLE" property="com_value" />
+			<result column="com_image" jdbcType="VARCHAR" property="com_image" />
+			<result column="status" jdbcType="INTEGER" property="status" />
+			<result column="com_stock" jdbcType="INTEGER" property="com_stock" />
+		</association>
+	</resultMap>
+	
+	<!-- DATE_FORMAT把时间从date转string -->
+	<!-- 另外一种连表方式  内联inner -->
+	<select id="getAllorders" resultType="java.util.Map">
+		select t.*,u.name	from
+			(select o.order_id,o.com_id,o.user_id,o.serial_number,o.quantity,DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') as create_time,o.exist, 
+				c.com_name,c.com_intro,c.com_value,c.com_image,c.status,c.com_stock
+				from user_order o inner join commodity c on o.com_id=c.com_id) t,
+			user u
+		<where>
+			t.exist = 0 and t.user_id = u.user_id 
+			<if test="name != null and name != ''">
+				AND u.name LIKE CONCAT(CONCAT('%',#{name},'%'))
+			</if>
+		</where>
+		ORDER BY u.user_id
+		LIMIT #{currentPage},#{pageSize}
+	</select>
+	
+	
+	<!-- 获取订单数 -->
+	<select id="getTotalorder" parameterType="String" resultType="int">
+		select count(*) from user_order o, user u, commodity c 
+		<where>
+			o.com_id = c.com_id and o.user_id = u.user_id and o.exist = 0
+			<if test="name != null and name != ''">
+				AND u.name LIKE CONCAT(CONCAT('%',#{name},'%'))
+			</if>
+		</where>
+	</select>
+	
+	<!-- 删除订单 -->
+	<!-- 批量删除订单 ，改变exist字段-->
+	<update id="deleteOrders">
+		update `user_order` 
+			set `exist` = 1
+		WHERE `order_id` in
+		<foreach item="order_id" collection="array" index="no" open="(" separator="," close=")">
+			#{order_id}
+		</foreach>
+	</update>
+	
+	
+</mapper>

@@ -1,0 +1,10 @@
+api\app\pojo\Order.class
+api\app\pojo\User.class
+api\app\pojo\Donate.class
+api\app\pojo\PublicWelfare.class
+api\app\pojo\Task.class
+api\app\pojo\Commodity.class
+api\app\pojo\Advertisement.class
+api\app\pojo\Coupon.class
+api\app\pojo\Level.class
+api\app\pojo\SignIn.class
