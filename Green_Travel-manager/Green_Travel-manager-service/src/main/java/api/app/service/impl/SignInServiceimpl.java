@@ -115,7 +115,7 @@ public class SignInServiceimpl implements SignInService {
 	 * 签到
 	 */
 	@Override
-	public JSONObject signin(Map<String,Object> map) {
+	public JSONObject insertsignin(Map<String,Object> map) {
 		int code = 1;		
 		//获取年，月，日
 		Calendar cal = Calendar.getInstance();

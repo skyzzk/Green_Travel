@@ -47,7 +47,7 @@ public class SignInController {
 	@RequestMapping(value = "Signin", method = RequestMethod.POST )
 	public Map<String,Object> signin(@RequestBody Map<String,Object> map) {
 		if(map.containsKey("id") && map.containsKey("user_id")) {
-			return signInService.signin(map);
+			return signInService.insertsignin(map);
 		}
 		JSONObject js = new JSONObject();
 		js.put("code", 1);

@@ -40,5 +40,5 @@ public interface SignInService {
 	/**
 	 * 签到
 	 */
-	public JSONObject signin(Map<String,Object> map);
+	public JSONObject insertsignin(Map<String,Object> map);
 }

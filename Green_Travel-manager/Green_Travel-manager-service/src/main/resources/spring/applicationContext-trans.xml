@@ -20,11 +20,20 @@
 			<tx:method name="insert*" propagation="REQUIRED" />
 			<tx:method name="add*" propagation="REQUIRED" />
 			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="total" propagation="REQUIRED" read-only="true" />
 			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="check*" propagation="REQUIRED" />
+			<tx:method name="acquire*" propagation="REQUIRED" />
+			<tx:method name="public*" propagation="REQUIRED" />
+			<tx:method name="user*" propagation="REQUIRED" />
+			<tx:method name="user*" propagation="REQUIRED" />
+			<tx:method name="Authentication" propagation="REQUIRED" />
 			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="like*" propagation="SUPPORTS" read-only="true" />
 			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
 			<tx:method name="select*" propagation="SUPPORTS" read-only="true" />
 			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="list*" propagation="SUPPORTS" read-only="true" />
 		</tx:attributes>
 	</tx:advice>
 	<!-- 切面 -->
