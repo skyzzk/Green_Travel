@@ -6,6 +6,7 @@ api\app\service\impl\LevelServiceimpl.class
 api\app\service\impl\CommodityServiceimpl.class
 api\app\service\impl\OrderServiceimpl.class
 api\app\service\impl\TaskServiceimpl.class
+api\app\quartz\FinishTask.class
 api\app\redis\JedisClient.class
 api\app\service\impl\AdvertisementServiceimpl.class
 api\app\service\impl\SignInServiceimpl.class

@@ -11,29 +11,29 @@
  
     <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>任务调度配置<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< -->
     <!-- 实例化bean -->
-    <!-- <bean id="demo" class="api.app.quartz.FinishTask" /> -->
+    <bean id="demo" class="api.app.quartz.FinishTask" />
  
  
     <!-- 配置MethodInvokingJobDetailFactoryBean -->
-   <!--  <bean id="testTaskMethod"
+    <bean id="testTaskMethod"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="demo" />
         <property name="targetMethod" value="execute" />
         <property name="concurrent" value="false" />
-    </bean> -->
+    </bean>
  
  
     <!-- ============= 调度触发器 ============= -->
-   <!--  <bean id="articleBatchRunTrigger"
+    <bean id="articleBatchRunTrigger"
           class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="testTaskMethod" />
-        每天晚上12点执行一次
+       <!--  每天晚上12点执行一次 -->
         <property name="cronExpression" value="0 0 0 * * ?" />
-    </bean> -->
+    </bean>
     <!--其他执行执行规则可以自行查找-->
  
     <!-- ============= 调度工厂 ============= -->
-    <!-- <bean id="schedulerBean"
+    <bean id="schedulerBean"
           class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
           lazy-init="false">
         <property name="triggers">
@@ -41,5 +41,5 @@
                 <ref bean="articleBatchRunTrigger" />
             </list>
         </property>
-    </bean> -->
+    </bean>
 </beans>

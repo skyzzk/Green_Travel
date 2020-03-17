@@ -360,4 +360,11 @@ public class UserServiceimpl implements UserService {
 		return js;
 	}
 	
+	/**
+	 * 获取所有用户id
+	 */
+	public List<Integer> getAllUserId(){
+		return userMapper.getAllUserId();
+	}
+	
 }

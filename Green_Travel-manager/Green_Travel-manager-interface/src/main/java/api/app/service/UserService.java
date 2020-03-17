@@ -1,4 +1,5 @@
 package api.app.service;
+import java.util.List;
 import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 
@@ -58,5 +59,9 @@ public interface UserService {
 	 */
 	public JSONObject acquireAward(Map<String, Integer> map);
 	
+	/**
+	 * 获取所有用户id
+	 */
+	public List<Integer> getAllUserId();
 
 }
