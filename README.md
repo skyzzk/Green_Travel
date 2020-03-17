@@ -3,6 +3,8 @@
 
 maven+ssm+dubbo+redis
 
+以下为部分展示
+
 [image（前台登录页）](picture/1.jpg)
 [image（前天首页）](picture/2.jpg)
 [image（后台首页）](picture/3.jpg)
