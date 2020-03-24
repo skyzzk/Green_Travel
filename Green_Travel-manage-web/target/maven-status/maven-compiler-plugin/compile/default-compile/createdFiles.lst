@@ -5,6 +5,8 @@ api\app\controller\OrderController.class
 api\app\controller\TaskController.class
 api\app\controller\SignInController.class
 api\app\controller\LevelController.class
+api\app\filter\LoginFilter.class
+api\app\filter\PreventRepeat.class
 api\app\controller\PublicWelfareController.class
 api\app\controller\CommodityController.class
 api\app\controller\CouponController.class

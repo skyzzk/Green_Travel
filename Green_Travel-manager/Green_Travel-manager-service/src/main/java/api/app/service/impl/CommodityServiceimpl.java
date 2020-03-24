@@ -7,9 +7,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.*;
@@ -39,6 +48,11 @@ public class CommodityServiceimpl implements CommodityService {
 	
 	@Value("${CONTENT_KEY}")
 	private String CONTENT_KEY;
+	
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Resource
+	private Destination topicDestination;
 	
 	/**
 	 * 根据订单id查询商品
@@ -127,7 +141,7 @@ public class CommodityServiceimpl implements CommodityService {
 			//保存数据				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				Date date = sdf.parse(sdf.format(new Date()));
-				int id = Id.randomID();
+				Integer id = Id.randomID();
 		        Commodity commodity = new Commodity();
 		        commodity.setCom_id(id);
 		        commodity.setCom_image(com_image);
@@ -140,6 +154,18 @@ public class CommodityServiceimpl implements CommodityService {
 		        commodityMapper.insertCommodity(commodity);				
 				code = 0;			
 				js.put("code", code);
+				
+				//删除缓冲，发送信息
+				jmsTemplate.send(topicDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						TextMessage textMessage = session.createTextMessage(id.toString());
+						return textMessage;
+					}
+				});
+				
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 				js.put("code", code);
@@ -188,7 +214,7 @@ public class CommodityServiceimpl implements CommodityService {
 			String com_name = (String) map.get("name");
 			String com_intro = (String) map.get("description");
 			double com_value = Double.valueOf(map.get("integral").toString());
-			int com_id = (int) map.get("id");
+			Integer com_id = (Integer) map.get("id");
 			String com_image = (String) map.get("path");
 			int com_stock = (int) map.get("stock");
 			int st = (int) map.get("status");
@@ -209,6 +235,17 @@ public class CommodityServiceimpl implements CommodityService {
 		        commodityMapper.updateCommodity(commodity);					
 				code = 0;
 				js.put("code", code);
+				
+				//删除缓冲，发送信息
+				jmsTemplate.send(topicDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						TextMessage textMessage = session.createTextMessage(com_id.toString());
+						return textMessage;
+					}
+				});
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 				js.put("code", code);

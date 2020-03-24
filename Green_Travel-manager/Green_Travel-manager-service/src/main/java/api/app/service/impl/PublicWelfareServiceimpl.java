@@ -5,9 +5,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -33,6 +42,12 @@ public class PublicWelfareServiceimpl implements PublicWelfareService {
 	
 	@Value("${CONTENT_KEY}")
 	private String CONTENT_KEY;
+	
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Resource
+	private Destination topicDestination;
+	
 	/**
 	 * 查询用户公益
 	 */
@@ -104,6 +119,17 @@ public class PublicWelfareServiceimpl implements PublicWelfareService {
 			try {
 				publicWelfareMapper.updateStatus(id, status, reason);
 				code = 0;
+				
+				
+				//删除缓冲，发送信息
+				jmsTemplate.send(topicDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						TextMessage textMessage = session.createTextMessage(id.toString());
+						return textMessage;
+					}
+				});
 			}catch(Exception e) {
 				e.printStackTrace();
 				js.put("code", code);

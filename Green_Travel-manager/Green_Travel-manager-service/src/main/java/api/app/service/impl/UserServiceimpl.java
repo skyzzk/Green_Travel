@@ -340,15 +340,12 @@ public class UserServiceimpl implements UserService {
 		int code = 1;
 		Integer id = (int) map.get("id");
 		String name = (String) map.get("name");
-		System.out.println("666");
 		try {
 			Integer flag = userMapper.existUser(id, name);		//查询是否存在用户
-			System.out.println(666);
 			if(flag == 0) {
 				//不存在则插入用户，插入等级
 				userMapper.insertUser(id, name);
 				levelMapper.insertLevel(id);
-				System.out.println(666);
 			}
 			code = 0;
 			js.put("code", code);

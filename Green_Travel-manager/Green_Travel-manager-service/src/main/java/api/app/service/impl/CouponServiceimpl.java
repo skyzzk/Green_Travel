@@ -4,7 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -19,6 +28,12 @@ public class CouponServiceimpl implements CouponService {
 
 	@Autowired
 	private CouponMapper couponMapper;
+	
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Resource
+	private Destination topicDestination;
+	
 	
 	/**
 	 * 添加优惠券
@@ -42,6 +57,19 @@ public class CouponServiceimpl implements CouponService {
 				couponMapper.insertCoupon(coupon);			//添加优惠券
 				code = 0;
 				js.put("code", code);	
+				
+				
+				//删除缓冲，发送信息
+				jmsTemplate.send(topicDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						TextMessage textMessage = session.createTextMessage(co_id.toString());
+						return textMessage;
+					}
+				});
+				
+				
 			}catch(Exception e) {
 				js.put("code", code);
 				e.printStackTrace();
@@ -129,6 +157,17 @@ public class CouponServiceimpl implements CouponService {
 				couponMapper.updateCoupon(coupon);			//修改优惠券
 				code = 0;				
 				js.put("code", code);	
+				
+				//删除缓冲，发送信息
+				jmsTemplate.send(topicDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						TextMessage textMessage = session.createTextMessage(co_id.toString());
+						return textMessage;
+					}
+				});
+				
 			}catch(Exception e) {
 				js.put("code", code);
 				e.printStackTrace();

@@ -1,7 +1,7 @@
 # Green_Travel
 基于绿色出行场景个人碳排放积分系统开发与运营开发
 
-maven+ssm+dubbo+redis
+maven+ssm+dubbo+redis+activemq
 
 以下为部分展示
 

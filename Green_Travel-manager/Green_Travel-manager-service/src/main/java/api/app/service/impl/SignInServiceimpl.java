@@ -51,7 +51,7 @@ public class SignInServiceimpl implements SignInService {
 				signin.setId(randomID.randomID()); 		//随机获取ID保存id
 				signInMapper.insertSignIn(signin);
 			}	
-			JSONObject data = (JSONObject) signInMapper.getDays(user_id,month,year);
+			Map<String,Object> data = signInMapper.getDays(user_id,month,year);				;
 			Integer id = Integer.parseInt(data.get("id").toString());						//获取id
 			String str = (String) data.get("day");				//获取签到的天，数字		
 			if(str.equals("")) {
