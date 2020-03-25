@@ -42,4 +42,18 @@ public interface OrderMapper {
 	 * 删除订单
 	 */
 	public void deleteOrders(Integer[] order_id);
+	/**
+	 * 获取用户订单
+	 */
+	public List<Object> getUserOrder(@Param("user_id")Integer user_id,@Param("currentPage")Integer currentPage,@Param("pageSize")Integer pageSize);
+	
+	/**
+	 * 删除用户订单，修改destory字段
+	 */
+	public void deleteUserOrder(Integer order_id);
+	
+	/**
+	 * 获取用户详细订单
+	 */
+	public Object getOrderdetail(Integer order_id);
 }

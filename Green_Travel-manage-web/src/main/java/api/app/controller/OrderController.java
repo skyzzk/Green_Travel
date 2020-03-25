@@ -77,4 +77,35 @@ public class OrderController {
 		js.put("code",1);
 		return js;
 	}
+	
+	/**
+	 * 获取用户订单
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getUserOrder", method = RequestMethod.GET)
+	public JSONObject getUserOrder(Integer user_id,Integer currentPage,Integer pageSize) {
+		return orderService.getUserOrder(user_id, currentPage, pageSize);
+	}
+	
+	/**
+	 * 用户删除订单
+	 */
+	@ResponseBody
+	@RequestMapping(value = "deleteUserOrder", method = RequestMethod.POST)
+	public JSONObject deleteUserOrder(@RequestBody Map<String,Integer> map) {
+		if(map.containsKey("id")) {
+			return orderService.deleteUserOrder(map);
+		}
+		JSONObject js = new JSONObject();
+		js.put("code", 1);
+		return js;
+	}
+	/**
+	 * 获取用户详细订单
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getOrderdetail", method = RequestMethod.GET)
+	public JSONObject getOrderdetail(Integer id) {
+		return orderService.getOrderdetail(id);
+	}
 }

@@ -42,4 +42,19 @@ public interface OrderService {
 	 * 删除订单
 	 */
 	public JSONObject deleteOrders(Integer[] order_id);
+	
+	
+	/**
+	 * 获取用户订单
+	 */
+	public JSONObject getUserOrder(Integer user_id,Integer currentPage,Integer pageSize);
+	/**
+	 * 删除用户订单，修改destory字段
+	 */
+	public JSONObject deleteUserOrder(Map<String,Integer> map);
+	
+	/**
+	 * 获取用户详细订单
+	 */
+	public JSONObject getOrderdetail(Integer order_id);
 }

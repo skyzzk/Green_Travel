@@ -87,5 +87,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</foreach>
 	</update>
 	
+		<!-- 获取用户订单 -->
+	<select id="getUserOrder" resultType="java.util.Map">
+		select u.order_id,u.serial_number,DATE_FORMAT(u.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			c.com_name,c.com_value,c.com_image,c.com_intro
+			from user_order u INNER JOIN commodity c
+			where u.destory = 0  and u.exist = 0 and u.com_id = c.com_id and u.user_id = #{user_id}
+			ORDER BY u.order_id
+			LIMIT #{currentPage},#{pageSize}
+	</select>
+	
+	<!-- 删除用户订单，修改destory字段 -->
+	<update id="deleteUserOrder" parameterType="Integer">
+		update `user_order`	set `destory` = 1
+		where exist = 0 and  `order_id` = #{order_id}
+	</update>
+	
+	<!-- 用户详细订单信息 -->
+	<select id="getOrderdetail" parameterType="Integer" resultType="java.util.Map">
+		select u.order_id,u.serial_number,DATE_FORMAT(u.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			c.com_name,c.com_value,c.com_image,c.com_intro
+			from user_order u INNER JOIN commodity c
+			where u.destory = 0  and u.exist = 0 and u.com_id = c.com_id and u.order_id = #{order_id}
+	</select>
+	
 	
 </mapper>

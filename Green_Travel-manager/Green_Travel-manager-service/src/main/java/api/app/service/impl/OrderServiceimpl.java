@@ -232,4 +232,65 @@ public class OrderServiceimpl implements OrderService {
 		return js;
 	}
 	
+	/**
+	 * 获取用户订单
+	 */
+	@Override
+	public JSONObject getUserOrder(Integer user_id,Integer currentPage,Integer pageSize){
+		Integer code = 1;
+		JSONObject js = new JSONObject();
+		try {
+			Integer cur = (currentPage - 1) * pageSize;
+			List<Object> object = orderMapper.getUserOrder(user_id, cur, pageSize);
+			code = 0;
+			js.put("code", code);
+			js.put("data", object);
+		}catch(Exception e) {
+			e.printStackTrace();
+			js.put("code", code);
+			return js;
+		}
+		return js;
+	}
+	
+	/**
+	 * 删除用户订单，修改destory字段
+	 */
+	@Override
+	public JSONObject deleteUserOrder(Map<String,Integer> map) {
+		Integer code = 1;
+		JSONObject js = new JSONObject();
+		try {
+			Integer order_id = map.get("id");
+			orderMapper.deleteUserOrder(order_id);
+			code = 0;
+			js.put("code", code);
+		}catch(Exception e) {
+			e.printStackTrace();
+			js.put("code", code);
+			return js;
+		}
+		return js;
+	}
+	
+	/**
+	 * 获取用户详细订单
+	 */
+	@Override
+	public JSONObject getOrderdetail(Integer order_id) {
+		Integer code = 1;
+		JSONObject js = new JSONObject();
+		try {
+			Object order = orderMapper.getOrderdetail(order_id);
+			code = 0;
+			js.put("code", code);
+			js.put("data", order);
+		}catch(Exception e) {
+			e.printStackTrace();
+			js.put("code", code);
+			return js;
+		}
+		return js;
+	}
+
 }
